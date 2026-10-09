@@ -1,0 +1,25 @@
+# JavaScript
+node_modules/
+.next/
+coverage/
+npm-debug.log*
+
+# .NET
+bin/
+obj/
+TestResults/
+*.user
+*.suo
+
+# Local configuration
+.env
+.env.local
+appsettings.Development.local.json
+
+# IDE / OS
+.vs/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+

@@ -1,0 +1,50 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using SaaSPlatform.Api.Modules.Procurement.Application;
+using SaaSPlatform.Api.Modules.Procurement.Domain;
+
+namespace SaaSPlatform.Api.Modules.Procurement.Endpoints;
+
+public static class ProcurementEndpoints
+{
+    public static IEndpointRouteBuilder MapProcurementEndpoints(this IEndpointRouteBuilder endpoints)
+    {
+        var group = endpoints.MapGroup("/api/v1/procurement").WithTags("Procurement").RequireAuthorization("PlatformAccess");
+        group.MapGet("/dashboard", async (IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.Dashboard(user, ct))));
+        group.MapGet("/suppliers", async ([AsParameters] ProcurementListQuery query, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(MapPage(await service.Suppliers(user, query, ct), Map)));
+        group.MapGet("/suppliers/{id:guid}", async (Guid id, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.Supplier(user, id, ct))));
+        group.MapPost("/suppliers", async ([FromBody] SupplierInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Created("/api/v1/procurement/suppliers", Map(await service.CreateSupplier(user, input, ct))));
+        group.MapPut("/suppliers/{id:guid}", async (Guid id, [FromBody] SupplierInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.UpdateSupplier(user, id, input, ct))));
+        group.MapPatch("/suppliers/{id:guid}/status", async (Guid id, [FromBody] SupplierStatusInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.SetSupplierStatus(user, id, input, ct))));
+        group.MapPut("/suppliers/{id:guid}/parts", async (Guid id, [FromBody] SupplierPartInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.UpsertSupplierPart(user, id, input, ct))));
+        group.MapGet("/requisitions", async ([AsParameters] ProcurementListQuery query, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(MapPage(await service.Requisitions(user, query, ct), Map)));
+        group.MapGet("/requisitions/{id:guid}", async (Guid id, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.Requisition(user, id, ct))));
+        group.MapPost("/requisitions", async ([FromBody] RequisitionInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Created("/api/v1/procurement/requisitions", Map(await service.CreateRequisition(user, input, ct))));
+        group.MapPut("/requisitions/{id:guid}", async (Guid id, [FromBody] RequisitionInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.UpdateRequisition(user, id, input, ct))));
+        group.MapPost("/requisitions/{id:guid}/submit", async (Guid id, [FromBody] WorkflowInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.SubmitRequisition(user, id, input, ct))));
+        group.MapPost("/requisitions/{id:guid}/review", async (Guid id, [FromBody] RequisitionReviewInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.ReviewRequisition(user, id, input, ct))));
+        group.MapGet("/purchase-orders", async ([AsParameters] ProcurementListQuery query, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(MapPage(await service.PurchaseOrders(user, query, ct), Map)));
+        group.MapGet("/purchase-orders/{id:guid}", async (Guid id, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.PurchaseOrder(user, id, ct))));
+        group.MapPost("/purchase-orders", async ([FromBody] PurchaseOrderInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Created("/api/v1/procurement/purchase-orders", Map(await service.CreatePurchaseOrder(user, input, ct))));
+        group.MapPut("/purchase-orders/{id:guid}", async (Guid id, [FromBody] PurchaseOrderInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.UpdatePurchaseOrder(user, id, input, ct))));
+        group.MapPost("/purchase-orders/{id:guid}/issue", async (Guid id, [FromBody] WorkflowInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.IssuePurchaseOrder(user, id, input, ct))));
+        group.MapPost("/purchase-orders/{id:guid}/cancel", async (Guid id, [FromBody] WorkflowInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.CancelPurchaseOrder(user, id, input, ct))));
+        group.MapPost("/purchase-orders/{id:guid}/close", async (Guid id, [FromBody] WorkflowInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(Map(await service.ClosePurchaseOrder(user, id, input, ct))));
+        group.MapPost("/purchase-orders/{id:guid}/receipts", async (Guid id, [FromBody] PurchaseReceiptInput input, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Created("/api/v1/procurement/receipts", Map(await service.ReceivePurchaseOrder(user, id, input, ct))));
+        group.MapGet("/receipts", async ([AsParameters] ProcurementListQuery query, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok(MapPage(await service.Receipts(user, query, ct), Map)));
+        group.MapGet("/activities/{entityType}/{entityId:guid}", async (string entityType, Guid entityId, IProcurementService service, ClaimsPrincipal user, CancellationToken ct) => Results.Ok((await service.Activities(user, entityType, entityId, ct)).Select(Map)));
+        return endpoints;
+    }
+
+    private static object Map(ProcurementDashboard x) => new { x.DraftRequisitions, x.AwaitingApproval, x.ApprovedNotConverted, x.OpenPurchaseOrders, x.PartiallyReceivedOrders, x.OverdueDeliveries, x.PurchaseValueLast30Days, x.LowStockItems, RecentReceipts = x.RecentReceipts.Select(Map) };
+    private static object Map(Supplier x) => new { x.Id, x.Code, x.NameEn, x.NameAr, x.Status, x.ContactPerson, x.Email, x.Phone, x.AlternatePhone, x.TaxNumber, x.CommercialRegistrationNumber, x.Address, x.City, x.Country, x.Website, x.PaymentTerms, x.DefaultCurrency, x.Notes, x.Version, x.CreatedAtUtc, x.UpdatedAtUtc, Parts = x.Parts.Select(Map) };
+    private static object Map(SupplierPart x) => new { x.Id, x.SupplierId, x.PartId, PartSku = x.Part?.Sku, PartNameEn = x.Part?.NameEn, PartNameAr = x.Part?.NameAr, x.SupplierPartNumber, x.LastUnitPrice, x.Currency, x.MinimumOrderQuantity, x.LeadTimeDays, x.IsPreferred, x.Version };
+    private static object Map(PurchaseRequisition x) => new { x.Id, x.Number, x.SiteId, SiteNameEn = x.Site?.NameEn, SiteNameAr = x.Site?.NameAr, x.TargetWarehouseId, WarehouseNameEn = x.TargetWarehouse?.NameEn, WarehouseNameAr = x.TargetWarehouse?.NameAr, x.RequestedById, RequestedByName = x.RequestedBy?.DisplayName, x.RequestDate, x.NeedByDate, x.Priority, x.BusinessJustification, x.Notes, x.Status, x.ReviewedById, ReviewedByName = x.ReviewedBy?.DisplayName, x.ReviewedAtUtc, x.ReviewComment, x.Version, x.CreatedAtUtc, x.UpdatedAtUtc, Lines = x.Lines.Select(Map) };
+    private static object Map(PurchaseRequisitionLine x) => new { x.Id, x.RequisitionId, x.PartId, PartSku = x.Part?.Sku, PartNameEn = x.Part?.NameEn, PartNameAr = x.Part?.NameAr, x.RequestedQuantity, x.UnitOfMeasure, x.SuggestedSupplierId, SuggestedSupplierName = x.SuggestedSupplier?.NameEn, x.EstimatedUnitPrice, x.EstimatedTotal, x.Notes, x.ConvertedQuantity, RemainingQuantity = x.RequestedQuantity - x.ConvertedQuantity };
+    private static object Map(PurchaseOrder x) => new { x.Id, x.Number, x.SupplierId, SupplierCode = x.Supplier?.Code, SupplierNameEn = x.Supplier?.NameEn, SupplierNameAr = x.Supplier?.NameAr, x.SiteId, SiteNameEn = x.Site?.NameEn, SiteNameAr = x.Site?.NameAr, x.DestinationWarehouseId, WarehouseNameEn = x.DestinationWarehouse?.NameEn, WarehouseNameAr = x.DestinationWarehouse?.NameAr, x.OrderDate, x.ExpectedDeliveryDate, x.Currency, x.PaymentTerms, x.Notes, x.Status, x.Subtotal, x.CreatedById, x.IssuedById, x.IssuedAtUtc, x.Version, x.CreatedAtUtc, x.UpdatedAtUtc, Lines = x.Lines.Select(Map) };
+    private static object Map(PurchaseOrderLine x) => new { x.Id, x.PurchaseOrderId, x.PartId, PartSku = x.Part?.Sku, PartNameEn = x.Part?.NameEn, PartNameAr = x.Part?.NameAr, x.SourceRequisitionLineId, x.SupplierPartNumber, x.OrderedQuantity, x.UnitOfMeasure, x.UnitPrice, x.LineSubtotal, x.ReceivedQuantity, RemainingQuantity = x.OrderedQuantity - x.ReceivedQuantity };
+    private static object Map(PurchaseReceipt x) => new { x.Id, x.RequestId, x.PurchaseOrderId, PurchaseOrderNumber = x.PurchaseOrder?.Number, SupplierName = x.PurchaseOrder?.Supplier?.NameEn, x.ReceiptNumber, x.SupplierReference, x.ReceiptDate, x.WarehouseId, x.StockLocationId, x.ReceivedById, x.Notes, x.TotalCost, x.CreatedAtUtc, Lines = x.Lines.Select(Map) };
+    private static object Map(PurchaseReceiptLine x) => new { x.Id, x.PurchaseReceiptId, x.PurchaseOrderLineId, x.StockReceiptId, x.Quantity, x.UnitCost, x.TotalCost };
+    private static object Map(ProcurementActivity x) => new { x.Id, x.EntityType, x.EntityId, x.Action, x.FromStatus, x.ToStatus, x.Comment, x.ActorUserId, ActorName = x.ActorUser?.DisplayName, x.OccurredAtUtc };
+    private static object MapPage<T>(ProcurementPage<T> page, Func<T, object> map) => new { Items = page.Items.Select(map), page.Page, page.PageSize, page.Total, TotalPages = Math.Max(1, (int)Math.Ceiling(page.Total / (double)page.PageSize)) };
+}

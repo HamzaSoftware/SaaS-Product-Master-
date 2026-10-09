@@ -1,0 +1,1 @@
+import {PurchaseOrderDetails} from "@/components/procurement/procurement-pages";import {isLocale} from "@/i18n/config";import {notFound} from "next/navigation";export default async function Page({params}:{params:Promise<{locale:string;id:string}>}){const{locale,id}=await params;if(!isLocale(locale))notFound();return <PurchaseOrderDetails locale={locale} id={id}/>}

@@ -1,0 +1,12 @@
+npm notice run @saas-platform/web@0.1.0 dev
+npm notice run next dev
+⚠ Port 3000 is in use by process 35632, using available port 3001 instead.
+⨯ Another next dev server is already running.
+
+- Local:        http://localhost:3000
+- PID:          35632
+- Dir:          C:\Users\WinDows\Desktop\SaaS Product Master Contex\apps\web
+- Log:          .next\dev\logs\next-development.log
+
+You can access the existing server at http://localhost:3000,
+or run taskkill /PID 35632 /F to stop it and start a new one.

@@ -1,0 +1,20 @@
+▲ Next.js 16.3.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.8.31:3000
+- Environments: .env.local
+✓ Ready in 2.3s
+✓ Running next.config.ts took 155ms
+Creating turbopack project {
+  dir: 'C:\\Users\\WinDows\\Desktop\\SaaS Product Master Contex\\apps\\web',
+  testMode: true
+}
+
+○ Compiling /[locale]/procurement ...
+ GET /en/procurement 200 in 13.0s (next.js: 8.8s, generate-params: 3.3s, application-code: 812ms)
+ GET /ar/procurement 200 in 208ms (next.js: 19ms, generate-params: 20ms, application-code: 169ms)
+ GET /en/procurement/suppliers 200 in 3.8s (next.js: 1242ms, generate-params: 2.4s, application-code: 196ms)
+ GET /ar/procurement/receiving 200 in 4.2s (next.js: 1011ms, generate-params: 3.0s, application-code: 222ms)
+ GET /en/procurement 200 in 510ms (next.js: 19ms, generate-params: 23ms, application-code: 467ms)
+ GET /ar/procurement 200 in 278ms (next.js: 26ms, generate-params: 0.1ms, application-code: 252ms)
+ GET /en/procurement/purchase-orders/new 200 in 4.2s (next.js: 1265ms, generate-params: 2.4s, application-code: 576ms)
+ GET /ar/procurement/receiving 200 in 280ms (next.js: 21ms, generate-params: 21ms, application-code: 237ms)

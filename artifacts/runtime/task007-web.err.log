@@ -1,0 +1,77 @@
+npm notice run @saas-platform/web@0.1.0 dev
+npm notice run next dev
+Compaction failed: Failed to compact database
+
+Caused by:
+    0: Failed to merge database files for family 2
+    1: Failed to write compressed value block
+    2: Failed to write block data
+    3: failed to write to file `\\?\C:\Users\WinDows\Desktop\SaaS Product Master Contex\apps\web\.next\dev\cache\turbopack\v16.3.6-a758ffcf\00000594.sst`: There is not enough space on the disk. (os error 112)
+Compaction failed: Failed to compact database
+
+Caused by:
+    0: Failed to merge database files for family 2
+    1: Failed to write compressed value block
+    2: Failed to write block data
+    3: failed to write to file `\\?\C:\Users\WinDows\Desktop\SaaS Product Master Contex\apps\web\.next\dev\cache\turbopack\v16.3.6-a758ffcf\00000603.sst`: There is not enough space on the disk. (os error 112)
+Compaction failed: Failed to compact database
+
+Caused by:
+    0: Failed to merge database files for family 2
+    1: Failed to write compressed value block
+    2: Failed to write block data
+    3: failed to write to file `\\?\C:\Users\WinDows\Desktop\SaaS Product Master Contex\apps\web\.next\dev\cache\turbopack\v16.3.6-a758ffcf\00000610.sst`: There is not enough space on the disk. (os error 112)
+⨯ Error: ENOSPC: no space left on device, write
+    at ignore-listed frames {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write',
+  page: '/ar/procurement/receiving'
+}
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+Error: ENOSPC: no space left on device, write
+    at ignore-listed frames {
+  errno: -4055,
+  code: 'ENOSPC',
+  syscall: 'write',
+  page: '/ar/procurement/receiving'
+}
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/en/procurement'
+}
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/en/procurement'
+}
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/ar/procurement'
+}
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>) {
+  page: '/ar/procurement'
+}
+⨯ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+⨯ Failed to generate static paths for /[locale]/procurement:
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+⨯ Failed to generate static paths for /[locale]/procurement:
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)

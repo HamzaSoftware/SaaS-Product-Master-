@@ -1,0 +1,2 @@
+import {notFound} from "next/navigation";import {BreakdownDetails} from "@/components/maintenance/maintenance-pages";import {isLocale} from "@/i18n/config";import {OriginatingServiceRequest} from "@/components/service-requests/service-request-pages";
+export default async function Page({params}:{params:Promise<{locale:string;id:string}>}){const {locale,id}=await params;if(!isLocale(locale))notFound();return <div className="page-stack"><BreakdownDetails locale={locale} id={id}/><OriginatingServiceRequest locale={locale} breakdownId={id}/></div>}
